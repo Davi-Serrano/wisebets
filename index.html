@@ -132,7 +132,20 @@
   <script>
 
     // Troque pelo SEU URL:
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzSLnwOW8R5VH7lnSOmjei6BAB_cSofhPzv1JvUsmKZvWvA1dbUk4oC2PdAh0dsw_bYsQ/exec'; // exemplo: https://script.google.com/macros/s/xxxxxxx/exec
+    
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbzSLnwOW8R5VH7lnSOmjei6BAB_cSofhPzv1JvUsmKZvWvA1dbUk4oC2PdAh0dsw_bYsQ/exec';
+
+  document.getElementById('formulario').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const nome = encodeURIComponent(document.querySelector('[name="nome"]').value);
+    const cpf = encodeURIComponent(document.querySelector('[name="cpf"]').value);
+    const telefone = encodeURIComponent(document.querySelector('[name="telefone"]').value);
+    const email = encodeURIComponent(document.querySelector('[name="email"]').value);
+
+    const body = `nome=${nome}&cpf=${cpf}&telefone=${telefone}&email=${email}`;
+
+
 
 
     // Validação de CPF real
@@ -234,6 +247,29 @@
       if(v.length > 2) v = '('+v.slice(0,2)+') '+v.slice(2);
       if(v.length > 9) v = v.slice(0,10)+'-'+v.slice(10,15);
       this.value = v;
+    });
+
+
+    
+
+    try {
+      const response = await fetch(scriptURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body
+      });
+
+      if (response.ok) {
+        document.getElementById('mensagem').innerText = "Enviado com sucesso!";
+        this.reset();
+      } else {
+        document.getElementById('mensagem').innerText = "Erro no envio.";
+      }
+    } catch (err) {
+      document.getElementById('mensagem').innerText = "Erro de conexão.";
+    }
     });
   </script>
 </body>
